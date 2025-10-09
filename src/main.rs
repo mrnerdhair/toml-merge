@@ -1,8 +1,8 @@
-use json;
 use std::{
     fs,
     path::PathBuf,
 };
+
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -56,15 +56,15 @@ fn merge(merged: &mut toml::Value, value: &toml::Value) {
     }
 }
 
-fn toml_to_json(x: toml::Value) -> json::JsonValue {
+fn toml_to_json(x: toml::Value) -> serde_json::Value {
     match x {
-        toml::Value::String(x) => json::JsonValue::String(x),
-        toml::Value::Integer(x) => json::JsonValue::Number(x.into()),
-        toml::Value::Float(x) => json::JsonValue::Number(x.into()),
-        toml::Value::Boolean(x) => json::JsonValue::Boolean(x),
-        toml::Value::Datetime(x) => json::JsonValue::String(x.to_string()),
-        toml::Value::Array(x) => json::JsonValue::Array(x.into_iter().map(toml_to_json).collect()),
-        toml::Value::Table(x) => json::JsonValue::Object(x.into_iter().map(|(k, v)| (k, toml_to_json(v))).collect()),
+        toml::Value::String(x) => serde_json::Value::String(x),
+        toml::Value::Integer(x) => serde_json::Value::Number(x.into()),
+        toml::Value::Float(x) => serde_json::Value::Number(serde_json::Number::from_f64(x).unwrap()),
+        toml::Value::Boolean(x) => serde_json::Value::Bool(x),
+        toml::Value::Datetime(x) => serde_json::Value::String(x.to_string()),
+        toml::Value::Array(x) => serde_json::Value::Array(x.into_iter().map(toml_to_json).collect()),
+        toml::Value::Table(x) => serde_json::Value::Object(x.into_iter().map(|(k, v)| (k, toml_to_json(v))).collect()),
     }
 }
 
@@ -78,7 +78,7 @@ fn main() {
     }
 
     if opt.json_out {
-        println!("{}", json::stringify(toml_to_json(merged)));
+        println!("{}", serde_json::to_string(&toml_to_json(merged)).unwrap());
     } else {
         println!("{}", merged.to_string());
     }
