@@ -1,6 +1,6 @@
 [package]
 name = "toml-merge"
-version = "0.1.0"
+version = "0.2.0"
 description = "Simple CLI utility which merges TOML files."
 authors = ["Reid Rankin <reidrankin@gmail.com>"]
 license = "ISC"
