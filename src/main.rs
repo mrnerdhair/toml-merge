@@ -80,6 +80,6 @@ fn main() {
     if opt.json_out {
         println!("{}", serde_json::to_string(&toml_to_json(merged)).unwrap());
     } else {
-        println!("{}", merged.to_string());
+        println!("{}", toml::to_string_pretty(&merged).unwrap());
     }
 }
